@@ -1,10 +1,10 @@
 import "json"
 
-# Load the infracost breakdown JSON file from the parameter
-cost_estimate = json.unmarshal(read_file(globals.infracost_file))
+# Access the infracost data via global
+cost_estimate = globals.infracost
 
 # Define the maximum allowed cost (in your preferred currency)
-max_cost = 10.00  # Set your threshold here
+max_cost = 100.00  # Set your threshold here
 
 # Get the total monthly cost
 total_monthly_cost = cost_estimate.projects[0].monthly_total
