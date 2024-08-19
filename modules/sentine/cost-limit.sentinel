@@ -1,16 +1,20 @@
-# sentinel/cost-limit.sentinel
+import "json"
 
-import "tfplan"
-import "infracost"
+# Load the infracost breakdown JSON file from the parameter
+cost_estimate = json.unmarshal(read_file(globals.infracost_file))
 
-# Define your cost limit here
-cost_limit = 10.00
+# Define the maximum allowed cost (in your preferred currency)
+max_cost = 10.00  # Set your threshold here
 
-cost_estimates = infracost.cost_plans()
+# Get the total monthly cost
+total_monthly_cost = cost_estimate.projects[0].monthly_total
 
-# Fail if any cost estimate exceeds the limit
+# Define the rule to check if the total cost is within the allowed limit
 main = rule {
-    all cost_estimates as cost_estimate {
-        cost_estimate.estimate <= cost_limit
-    }
+    total_monthly_cost <= max_cost
+}
+
+# Define error messages if the rule fails
+if not main {
+    print("The estimated monthly cost (${total_monthly_cost}) exceeds the allowed limit of ${max_cost}.")
 }
